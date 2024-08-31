@@ -46,23 +46,21 @@ function Registration() {
     <>
       <div className={styles.formContainer}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <p>{errors.email?.message}</p>
+          {errors.email && <p>{errors.email.message}</p>}
           <input
             type="email"
             placeholder="Введите email"
             {...register("email")}
           />
-          <p>{errors.password?.message}</p>
+          {errors.password && <p>{errors.password.message}</p>}
           <input
             type="password"
-            name="password"
             placeholder="Введите пароль"
             {...register("password")}
           />
-          <p>{errors.repeatedPassword?.message}</p>
+          {errors.repeatedPassword && <p>{errors.repeatedPassword.message}</p>}
           <input
             type="password"
-            name="repeatedPassword"
             placeholder="Повторите пароль"
             {...register("repeatedPassword")}
           />
