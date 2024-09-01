@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useRef } from "react";
 import styles from "./registration.module.css";
 
 const fieldsSchema = yup
@@ -16,17 +17,20 @@ const fieldsSchema = yup
       .string()
       .required("Пароль обязателен")
       .min(8, "Должно быть более 8 символов")
-      .max(25, "Должно быть не больее 25 символов"),
+      .max(25, "Должно быть не больше 25 символов")
+      .matches(
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?])/,
+        "Пароль должен содержать хотя бы одну букву, одну цифру и один специальный символ"
+      ),
 
     repeatedPassword: yup
       .string()
       .required("Повтор пароля обязателен")
       .oneOf([yup.ref("password"), null], "Пароли не совпадают"),
   })
-
   .required();
 
-function Registration() {
+function App() {
   const {
     register,
     handleSubmit,
@@ -38,10 +42,21 @@ function Registration() {
       repeatedPassword: "",
     },
     resolver: yupResolver(fieldsSchema),
+    mode: "onChange",
   });
+
+  const submitButtonRef = useRef(null);
+
   const onSubmit = (data) => {
     console.log(data);
   };
+
+  const handleBlur = () => {
+    if (!errors.email && !errors.password && !errors.repeatedPassword) {
+      submitButtonRef.current.focus();
+    }
+  };
+
   return (
     <>
       <div className={styles.formContainer}>
@@ -63,10 +78,12 @@ function Registration() {
             type="password"
             placeholder="Повторите пароль"
             {...register("repeatedPassword")}
+            onBlur={handleBlur}
           />
           <button
             type="submit"
             className={styles.submitButton}
+            ref={submitButtonRef}
             disabled={
               !!errors.email || !!errors.password || errors.repeatedPassword
             }
@@ -79,4 +96,4 @@ function Registration() {
   );
 }
 
-export default Registration;
+export default App;
